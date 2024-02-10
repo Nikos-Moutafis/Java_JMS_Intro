@@ -1,0 +1,46 @@
+package loadbalancing;
+
+import javax.jms.JMSConsumer;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.JMSProducer;
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+
+import com.bharath.jms.hm.model.Patient;
+
+public class ClinicalsApp {
+
+	public static void main(String[] args) throws NamingException, JMSException, InterruptedException {
+
+		InitialContext initialContext = new InitialContext();
+		Queue requestQueue = (Queue) initialContext.lookup("queue/requestQueue");
+		Queue replyQueue = (Queue) initialContext.lookup("queue/replyQueue");
+
+		try (ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory();
+				JMSContext jmsContext = cf.createContext()) {
+
+			JMSProducer producer = jmsContext.createProducer();
+
+			JMSConsumer consumer1 = jmsContext.createConsumer(requestQueue);
+			JMSConsumer consumer2 = jmsContext.createConsumer(requestQueue);
+
+			for(int i = 1; i <= 10; i += 2) {
+			    // Consumer 1 receives messages
+			    Patient patient1 = consumer1.receiveBody(Patient.class);
+			    System.out.println(patient1);
+
+			    // Consumer 2 receives messages
+			    Patient patient2 = consumer2.receiveBody(Patient.class);
+			    System.out.println(patient2);
+			}
+
+
+		}
+	}
+}

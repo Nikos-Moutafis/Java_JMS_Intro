@@ -1,0 +1,5 @@
+package com.bharath.springjms.listeners;
+
+public class MyListener {
+
+}
