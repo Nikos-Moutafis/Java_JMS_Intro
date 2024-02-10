@@ -1,9 +1,0 @@
-package com.bharath.jms.grouping;
-
-public class MessageGroupingDemo {
-
-	public static void main(String[] args) {
-
-	}
-
-}
